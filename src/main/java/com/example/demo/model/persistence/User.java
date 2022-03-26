@@ -1,5 +1,6 @@
 package com.example.demo.model.persistence;
 
+import com.example.demo.util.CryptoHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,6 +15,9 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty
 	private long id;
+
+	@Column(nullable = false, unique = true)
+	private String salt;
 
 	@Column(nullable = false, unique = true)
 	@JsonProperty
@@ -59,7 +63,11 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
-	
-	
+
+	public String getSalt() {
+		if (salt == null) {
+			salt = CryptoHelper.makeSalt();
+		}
+		return salt;
+	}
 }

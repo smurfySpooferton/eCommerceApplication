@@ -2,6 +2,8 @@ package com.example.demo.security;
 
 import com.auth0.jwt.JWT;
 import com.example.demo.model.persistence.User;
+import com.example.demo.service.HashService;
+import com.example.demo.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,10 +22,14 @@ import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final HashService hashService;
+    private final UserService userService;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, HashService hashService, UserService userService) {
         this.authenticationManager = authenticationManager;
+        this.hashService = hashService;
+        this.userService = userService;
     }
 
     @Override
@@ -32,7 +38,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             User credentials = new ObjectMapper()
                     .readValue(req.getInputStream(), User.class);
-
+            String salt = userService.getSalt(credentials.getUsername());
+            String password = hashService.getHashedValue(credentials.getPassword(), salt);
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             credentials.getUsername(),
