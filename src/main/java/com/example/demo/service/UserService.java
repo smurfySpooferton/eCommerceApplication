@@ -16,12 +16,10 @@ import javax.transaction.Transactional;
 public class UserService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
-    private final HashService hashService;
 
-    public UserService(CartRepository cartRepository, UserRepository userRepository, HashService hashService) {
+    public UserService(CartRepository cartRepository, UserRepository userRepository) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
-        this.hashService = hashService;
     }
 
     public UserDTO createUser(CreateUserRequest createUserRequest) {
@@ -38,14 +36,13 @@ public class UserService {
         Cart cart = new Cart();
         cartRepository.save(cart);
         user.setCart(cart);
-        //user.setPassword(hashService.getHashedValue(createUserRequest.getPassword(), user.getSalt()));
         user.setPassword(createUserRequest.getPassword());
         return user;
     }
 
     public UserDTO byUserName(String username) {
         try {
-            return UserMapper.fromUser(userRepository.findByUsername(username));
+            return UserMapper.fromUser(userRepository.findUserByUsername(username));
         } catch (Exception e) {
             return null;
         }
@@ -57,15 +54,5 @@ public class UserService {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public String getSalt(String username) {
-        User user;
-        try {
-            user = userRepository.findByUsername(username);
-        } catch (Exception e) {
-            user = new User();
-        }
-        return user.getSalt();
     }
 }
