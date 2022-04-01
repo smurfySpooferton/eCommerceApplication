@@ -9,6 +9,7 @@ import com.example.demo.model.dto.requests.CreateUserRequest;
 import com.example.demo.model.dto.requests.ModifyCartRequest;
 import com.example.demo.model.dto.responses.UserDTO;
 import com.example.demo.model.dto.responses.UserOrderDTO;
+import com.example.demo.util.CryptoHelper;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -42,6 +43,12 @@ public class OrderTests {
         Assertions.assertEquals(HttpStatus.OK, listResponseEntity.getStatusCode());
         Assertions.assertEquals(1, listResponseEntity.getBody().size());
         Assertions.assertEquals(1, listResponseEntity.getBody().get(0).getItems().get(0));
+
+        request.setUsername(CryptoHelper.makeSalt());
+        responseEntity = orderController.submit(request.getUsername());
+        listResponseEntity = orderController.getOrdersForUser(request.getUsername());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, listResponseEntity.getStatusCode());
     }
 
     private UserDTO addUser() {

@@ -8,6 +8,7 @@ import com.example.demo.model.dto.requests.CreateUserRequest;
 import com.example.demo.model.dto.requests.ModifyCartRequest;
 import com.example.demo.model.dto.responses.CartDTO;
 import com.example.demo.model.dto.responses.UserDTO;
+import com.example.demo.util.CryptoHelper;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -42,6 +43,13 @@ public class CartTests {
         Assertions.assertEquals(1L, responseEntity.getBody().getItemIds().get(0));
 
         request.setItemId(0);
+        responseEntity = cartController.addTocart(request);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        responseEntity = cartController.removeFromcart(request);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+
+        request.setItemId(1);
+        request.setUsername(CryptoHelper.makeSalt());
         responseEntity = cartController.addTocart(request);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         responseEntity = cartController.removeFromcart(request);
