@@ -8,6 +8,7 @@ public class UserMapper {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
+        userDTO.setCartId(user.getCart().getId());
         return userDTO;
     }
 }

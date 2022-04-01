@@ -38,6 +38,6 @@ public class ItemTests {
         Assertions.assertEquals(ItemMapper.fromDto(byName.get(0)), ItemMapper.fromDto(all.get(0)));
         Assertions.assertEquals(ItemMapper.fromDto(byId), ItemMapper.fromDto(all.get(0)));
 
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, itemController.getItemById(99L).getStatusCode());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, itemController.getItemById((long) all.size() + 1).getStatusCode());
     }
 }

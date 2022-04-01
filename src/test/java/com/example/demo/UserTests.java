@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.controllers.UserController;
+import com.example.demo.data.UserData;
 import com.example.demo.model.dto.requests.CreateUserRequest;
 import com.example.demo.model.dto.responses.UserDTO;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class UserTests {
 
     @Test
     public void testUser() {
-        CreateUserRequest createUserRequest = createUserRequest();
+        CreateUserRequest createUserRequest = UserData.createUserRequest();
         UserDTO userDTO1 = userController.createUser(createUserRequest).getBody();
 
         Assertions.assertEquals(userDTO1.getUsername(), createUserRequest.getUsername());
@@ -40,12 +41,4 @@ public class UserTests {
         HttpStatus status2 = userController.findByUserName(userDTO1.getUsername() + "bla").getStatusCode();
         Assertions.assertEquals(HttpStatus.NOT_FOUND, status2);
     }
-
-    private CreateUserRequest createUserRequest() {
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("Tester");
-        createUserRequest.setPassword("TestPw");
-        return createUserRequest;
-    }
-
 }
