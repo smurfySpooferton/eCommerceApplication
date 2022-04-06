@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="e-commerce-app" />
+        <module name="eCommerceApplication" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="e-commerce-app" options="-parameters" />
+      <module name="eCommerceApplication" options="-parameters" />
     </option>
   </component>
 </project>

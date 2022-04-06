@@ -1,34 +1,28 @@
 package com.example.demo;
 
 import com.example.demo.controllers.CartController;
-import com.example.demo.controllers.UserController;
 import com.example.demo.data.ModifyCartRequestData;
-import com.example.demo.data.UserData;
-import com.example.demo.model.dto.requests.CreateUserRequest;
 import com.example.demo.model.dto.requests.ModifyCartRequest;
 import com.example.demo.model.dto.responses.CartDTO;
 import com.example.demo.model.dto.responses.UserDTO;
-import com.example.demo.util.CryptoHelper;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class CartTests {
+public class CartTests extends AbstractAuthableTest {
     @Autowired
     private CartController cartController;
-    @Autowired
-    private UserController userController;
+
+    public CartTests() {
+        super("CartTests", "12345678");
+    }
 
     @Test
     public void testCart() {
         UserDTO userDTO = addUser();
+        ModifyCartRequestData.makeRequest(userDTO.getUsername());
         ModifyCartRequest request = ModifyCartRequestData.makeRequest(userDTO.getUsername());
         ResponseEntity<CartDTO> responseEntity = cartController.addTocart(request);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -49,15 +43,10 @@ public class CartTests {
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 
         request.setItemId(1);
-        request.setUsername(CryptoHelper.makeSalt());
+        request.setUsername(userDTO.getUsername() + "1");
         responseEntity = cartController.addTocart(request);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         responseEntity = cartController.removeFromcart(request);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    }
-
-    private UserDTO addUser() {
-        CreateUserRequest createUserRequest = UserData.createUserRequest();
-        return userController.createUser(createUserRequest).getBody();
     }
 }

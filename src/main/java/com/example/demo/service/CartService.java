@@ -32,6 +32,7 @@ public class CartService {
             return null;
         }
         Cart cart = user.getCart();
+        cart.setUser(user);
         IntStream.range(0, quantity).forEach(i -> cart.addItem(item.get()));
         Cart savedCart = cartRepository.save(cart);
         return CartMapper.fromCart(savedCart);

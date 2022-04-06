@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EntityScan("com.example.demo.model.persistence")
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class ECommerceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ECommerceApplication.class, args);
     }
