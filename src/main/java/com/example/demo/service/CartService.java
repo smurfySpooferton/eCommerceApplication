@@ -8,6 +8,8 @@ import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.ItemRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,6 +20,7 @@ public class CartService {
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     public CartService(CartRepository cartRepository, ItemRepository itemRepository, UserRepository userRepository) {
         this.cartRepository = cartRepository;
@@ -29,6 +32,7 @@ public class CartService {
         User user = userRepository.findUserByUsername(username);
         Optional<Item> item = itemRepository.findById(itemId);
         if (user == null || !item.isPresent()) {
+            logger.info("Could not find user name " + username + " or item with id " + itemId + ". Item not added.");
             return null;
         }
         Cart cart = user.getCart();
@@ -42,6 +46,7 @@ public class CartService {
         User user = userRepository.findUserByUsername(username);
         Optional<Item> item = itemRepository.findById(itemId);
         if (user == null || !item.isPresent()) {
+            logger.info("Could not find user name " + username + " or item with id " + itemId + ". Item not removed.");
             return null;
         }
         Cart cart = user.getCart();

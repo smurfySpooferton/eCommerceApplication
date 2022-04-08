@@ -1,6 +1,8 @@
 package com.example.demo.security;
 
 import com.auth0.jwt.JWT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +20,7 @@ import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 @Component
 public class JWTAuthenticationVerficationFilter extends BasicAuthenticationFilter {
+    private final Logger logger = LoggerFactory.getLogger(JWTAuthenticationVerficationFilter.class);
 
     public JWTAuthenticationVerficationFilter(AuthenticationManager authManager) {
         super(authManager);
@@ -30,6 +33,7 @@ public class JWTAuthenticationVerficationFilter extends BasicAuthenticationFilte
 
         if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             chain.doFilter(req, res);
+            logger.error("Invalid auth header.");
             return;
         }
 
@@ -46,10 +50,13 @@ public class JWTAuthenticationVerficationFilter extends BasicAuthenticationFilte
                     .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
                     .getSubject();
             if (user != null) {
+                logger.info("Successfully authenticated.");
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
             }
+            logger.error("Authentication failed");
             return null;
         }
+        logger.error("Authentication failed");
         return null;
     }
 

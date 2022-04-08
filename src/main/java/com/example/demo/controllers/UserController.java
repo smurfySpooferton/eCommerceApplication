@@ -2,8 +2,9 @@ package com.example.demo.controllers;
 
 import com.example.demo.model.dto.requests.CreateUserRequest;
 import com.example.demo.model.dto.responses.UserDTO;
-import com.example.demo.service.HashService;
 import com.example.demo.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,32 +12,50 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
 
-	private final HashService hashService;
 	private final UserService userService;
+	private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-	public UserController(HashService hashService, UserService userService) {
-		this.hashService = hashService;
+	public UserController(UserService userService) {
 		this.userService = userService;
 	}
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
 		UserDTO userDTO = userService.byId(id);
-		return userDTO == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(userDTO);
+		if (userDTO == null) {
+			logger.info("Could not find user for id " + id + ".");
+			return ResponseEntity.notFound().build();
+		} else {
+			logger.info("Successfully returned user for id " + id + ".");
+			return ResponseEntity.ok(userDTO);
+		}
 	}
 
 	@GetMapping("/{username}")
 	public ResponseEntity<UserDTO> findByUserName(@PathVariable String username) {
 		UserDTO userDTO = userService.byUserName(username);
-		return userDTO == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(userDTO);
+		if (userDTO == null) {
+			logger.info("Could not find user for name " + username + ".");
+			return ResponseEntity.notFound().build();
+		} else {
+			logger.info("Successfully returned user for id " + username + ".");
+			return ResponseEntity.ok(userDTO);
+		}
 	}
 
 	@PostMapping("/create")
 	public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		try {
 			UserDTO userDTO = userService.createUser(createUserRequest);
-			return userDTO == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(userDTO);
+			if (userDTO == null) {
+				logger.info("Could not create user for name " + userDTO.getUsername() + ".");
+				return ResponseEntity.badRequest().build();
+			} else {
+				logger.info("Successfully created user for name " + userDTO.getUsername() + ".");
+				return ResponseEntity.ok(userDTO);
+			}
 		} catch (Exception e) {
+			logger.error("Critical error! Could not create user.");
 			return ResponseEntity.badRequest().build();
 		}
 
