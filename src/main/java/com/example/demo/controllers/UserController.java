@@ -35,7 +35,7 @@ public class UserController {
 	public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		try {
 			UserDTO userDTO = userService.createUser(createUserRequest);
-			return userDTO == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(userDTO);
+			return userDTO == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(userDTO);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}
